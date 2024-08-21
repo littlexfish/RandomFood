@@ -42,6 +42,9 @@ function main() {
     for(const f of foods) {
         addInput(f);
     }
+    if(foods.length === 0) {
+        selectedFood = 'Press "Enter" and add foods'
+    }
     requestAnimationFrame(tick);
 }
 
@@ -92,7 +95,8 @@ function nextFrame() {
 function getFoodsFromParam() {
     let param = new URLSearchParams(location.search);
     let foods = param.get('food');
-    return foods.split(';')
+    if(!foods) return [];
+    return foods.split(';');
 }
 
 function getFoodsFromInput() {
