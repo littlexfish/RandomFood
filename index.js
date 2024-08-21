@@ -14,6 +14,7 @@ function main() {
     dialog = document.getElementById('dialog');
     foods = getFoodsFromParam();
     function select() {
+        if(foods.length === 0) return;
         if(selectedFood === null) {
             selectedFood = foods[Math.floor(Math.random() * foods.length)];
         }
@@ -42,9 +43,6 @@ function main() {
     for(const f of foods) {
         addInput(f);
     }
-    if(foods.length === 0) {
-        selectedFood = 'Press "Enter" and add foods'
-    }
     requestAnimationFrame(tick);
 }
 
@@ -64,23 +62,28 @@ function cleanDialog() {
 }
 
 function tick() {
-    beforeFrame();
-    let showFood
-    if(selectedFood == null) {
-        showFood = foods[Math.floor(Math.random() * foods.length)];
-    }
-    else if(slowDownFrame > 0) {
-        if(SLOW_DOWN_MAX_FRAME === slowDownFrame || frame % (SLOW_DOWN_MAX_FRAME - slowDownFrame) === 0) {
-            slowDownFood = foods[Math.floor(Math.random() * foods.length)];
-            slowDownFrame -= 5;
-        }
-        showFood = slowDownFood;
+    if(foods.length === 0) {
+        text.innerText = 'Press "Enter" and add foods';
     }
     else {
-        showFood = selectedFood;
-        text.classList.add('confirm');
+        beforeFrame();
+        let showFood
+        if(selectedFood == null) {
+            showFood = foods[Math.floor(Math.random() * foods.length)];
+        }
+        else if(slowDownFrame > 0) {
+            if(SLOW_DOWN_MAX_FRAME === slowDownFrame || frame % (SLOW_DOWN_MAX_FRAME - slowDownFrame) === 0) {
+                slowDownFood = foods[Math.floor(Math.random() * foods.length)];
+                slowDownFrame -= 5;
+            }
+            showFood = slowDownFood;
+        }
+        else {
+            showFood = selectedFood;
+            text.classList.add('confirm');
+        }
+        if(text.innerText !== showFood) text.innerText = showFood;
     }
-    if(text.innerText !== showFood) text.innerText = showFood;
     nextFrame();
 }
 
@@ -121,7 +124,9 @@ function addInput(content) {
 
 function onInput(evt) {
     if(evt.key === ';') evt.preventDefault();
-    // foods = getFoodsFromInput();
+    if(evt.key === 'Enter') {
+        addInput('');
+    }
 }
 
 function onSave() {
